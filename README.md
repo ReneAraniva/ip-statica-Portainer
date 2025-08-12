@@ -17,7 +17,7 @@ Este script automatiza la instalación y configuración de un servidor Debian co
 ## Pasos para Utilizar el Script
 
 1. **Descargar el Script**  
-   Guarda el script en tu servidor Debian opcional(utiliza ssh para que sea mas sensillo) :
+   Guarda el script en tu servidor Debian opcional(utiliza ssh para que sea mas sencillo) :
    ```bash
    git clone https://github.com/ReneAraniva/ip-statica-Portainer.git
    ```
@@ -48,4 +48,5 @@ Este script automatiza la instalación y configuración de un servidor Debian co
 
 
 ¡Disfruta de tu nuevo servidor configurado! 🚀
+
 
