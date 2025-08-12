@@ -8,7 +8,7 @@ Este script automatiza la instalación y configuración de un servidor Debian co
 
 ## Requisitos
 
-- Debes tener acceso a un servidor Debian.
+- Debes tener acceso a una version reciente de Debian.
 - Ejecutar el script como usuario root o con privilegios de sudo.
 
 ---
@@ -44,5 +44,6 @@ Este script automatiza la instalación y configuración de un servidor Debian co
 - Portainer estará disponible en `https://IP_DEL_SERVIDOR:9443`.
 
 ---
+
 
 ¡Disfruta de tu nuevo servidor configurado! 🚀
