@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash 
 
 # ========================================
 #  Script de instalación y configuración
@@ -31,7 +31,7 @@ apt update && apt upgrade -y
 # ================================
 # Instalar herramientas básicas
 # ================================
-apt install -y curl wget git unzip zip net-tools htop ufw openssh-server sudo lolcat neofetch ipcalc
+apt install -y curl wget git unzip zip net-tools htop ufw openssh-server sudo ipcalc
 
 # ================================
 # Configuración SSH
@@ -75,18 +75,17 @@ systemctl restart networking
 echo -e "${verde}✅ IP estática configurada.${reset}"
 
 # ================================
-# Mostrar características del sistema
+# Mensaje de bienvenida
 # ================================
 clear
-cat << "EOF" | lolcat
+cat << "EOF"
 ___       __    ______                                 _____                                                  
 __ |     / /_______  /__________________ ________      __  /______     ______________________   ______________
 __ | /| / /_  _ \_  /_  ___/  __ \_  __ `__ \  _ \     _  __/  __ \    __  ___/  _ \_  ___/_ | / /  _ \_  ___/
 __ |/ |/ / /  __/  / / /__ / /_/ /  / / / / /  __/     / /_ / /_/ /    _(__  )/  __/  /   __ |/ //  __/  /    
 ____/|__/  \___//_/  \___/ \____//_/ /_/ /_/\___/      \__/ \____/     /____/ \___//_/    _____/ \___//_/     
 EOF
-echo -e "${amarillo}Bienvenido. Estas son las características de su máquina:${reset}"
-neofetch --ascii_distro debian
+echo -e "${amarillo}Bienvenido. Servidor configurándose...${reset}"
 
 # ================================
 # Instalar Docker
@@ -128,8 +127,6 @@ mkdir -p ~/servidor_web/{proyectos,scripts,backups}
 # Mensaje final
 # ================================
 clear
-cat << "EOF" | lolcat
-✅ Configuración completa.
-🌐 Portainer disponible en: https://IP_DEL_SERVIDOR:9443
-💻 Proyectos web en: ~/servidor_web
-EOF
+echo -e "${verde}✅ Configuración completa.${reset}"
+echo -e "${azul}🌐 Portainer disponible en: https://$IP_ACTUAL:9443${reset}"
+echo -e "${amarillo}💻 Proyectos web en: ~/servidor_web${reset}"
