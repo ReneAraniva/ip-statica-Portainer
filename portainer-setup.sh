@@ -47,8 +47,6 @@ echo -e "${azul}📌 Detectando y configurando IP estática...${reset}"
 IP_ACTUAL=$(hostname -I | awk '{print $1}')
 INTERFAZ=$(ip route | grep '^default' | awk '{print $5}')
 GATEWAY=$(ip route | grep '^default' | awk '{print $3}')
-MASCARA_CIDR=$(ip -o -f inet addr show $INTERFAZ | awk '{print $4}' | cut -d/ -f2)
-MASCARA=$(ipcalc -m $IP_ACTUAL/$MASCARA_CIDR | cut -d= -f2)
 
 echo -e "${amarillo}IP:${reset} $IP_ACTUAL"
 echo -e "${amarillo}Interfaz:${reset} $INTERFAZ"
@@ -66,7 +64,7 @@ iface lo inet loopback
 auto $INTERFAZ
 iface $INTERFAZ inet static
     address $IP_ACTUAL
-    netmask $MASCARA
+    netmask 255.255.255.0
     gateway $GATEWAY
     dns-nameservers 8.8.8.8 1.1.1.1
 EOL
@@ -130,3 +128,4 @@ clear
 echo -e "${verde}✅ Configuración completa.${reset}"
 echo -e "${azul}🌐 Portainer disponible en: https://$IP_ACTUAL:9443${reset}"
 echo -e "${amarillo}💻 Proyectos web en: ~/servidor_web${reset}"
+
