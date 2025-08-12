@@ -47,14 +47,16 @@ echo -e "${azul}📌 Detectando y configurando IP estática...${reset}"
 IP_ACTUAL=$(hostname -I | awk '{print $1}')
 INTERFAZ=$(ip route | grep '^default' | awk '{print $5}')
 GATEWAY=$(ip route | grep '^default' | awk '{print $3}')
+CIDR=$(ip -o -f inet addr show $INTERFAZ | awk '{print $4}')
+MASCARA=$(ipcalc $CIDR | grep Netmask | awk '{print $2}')
 
 echo -e "${amarillo}IP:${reset} $IP_ACTUAL"
 echo -e "${amarillo}Interfaz:${reset} $INTERFAZ"
 echo -e "${amarillo}Gateway:${reset} $GATEWAY"
 echo -e "${amarillo}Máscara:${reset} $MASCARA"
 
-# Backup configuración original
-cp /etc/network/interfaces /etc/network/interfaces.bak
+# Backup configuración original con fecha
+cp /etc/network/interfaces /etc/network/interfaces.bak.$(date +%F_%T)
 
 # Configuración nueva
 cat > /etc/network/interfaces <<EOL
@@ -64,12 +66,15 @@ iface lo inet loopback
 auto $INTERFAZ
 iface $INTERFAZ inet static
     address $IP_ACTUAL
-    netmask 255.255.255.0
+    netmask $MASCARA
     gateway $GATEWAY
     dns-nameservers 8.8.8.8 1.1.1.1
 EOL
 
-systemctl restart networking
+# Aplicar cambios de IP sin reiniciar todo networking (para no cortar SSH)
+ip addr flush dev $INTERFAZ
+ifup $INTERFAZ
+
 echo -e "${verde}✅ IP estática configurada.${reset}"
 
 # ================================
@@ -128,4 +133,3 @@ clear
 echo -e "${verde}✅ Configuración completa.${reset}"
 echo -e "${azul}🌐 Portainer disponible en: https://$IP_ACTUAL:9443${reset}"
 echo -e "${amarillo}💻 Proyectos web en: ~/servidor_web${reset}"
-
