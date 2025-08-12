@@ -9,6 +9,7 @@ Este script automatiza la instalación y configuración de un servidor Debian co
 ## Requisitos
 
 - Debes tener acceso a una version reciente de Debian.
+- Debes tener configurado con lo basico y actualizado el sistema.
 - Ejecutar el script como usuario root o con privilegios de sudo.
 
 ---
@@ -16,7 +17,7 @@ Este script automatiza la instalación y configuración de un servidor Debian co
 ## Pasos para Utilizar el Script
 
 1. **Descargar el Script**  
-   Guarda el script en tu servidor Debian :
+   Guarda el script en tu servidor Debian opcional(utiliza ssh para que sea mas sensillo) :
    ```bash
    git clone https://github.com/ReneAraniva/ip-statica-Portainer.git
    ```
@@ -24,13 +25,13 @@ Este script automatiza la instalación y configuración de un servidor Debian co
 2. **Dar Permisos de Ejecución**  
    Asegúrate de que el script tenga permisos de ejecución:
    ```bash
-   chmod +x instalar_servidor.sh
+   chmod +x portainer-setup.sh
    ```
 
 3. **Ejecutar el Script**  
    Ejecuta el script como root:
    ```bash
-   sudo ./instalar_servidor.sh
+   sudo ./portainer-setup.sh
    ```
 
 4. **Verificar la Configuración**  
@@ -47,3 +48,4 @@ Este script automatiza la instalación y configuración de un servidor Debian co
 
 
 ¡Disfruta de tu nuevo servidor configurado! 🚀
+
