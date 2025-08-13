@@ -47,16 +47,16 @@ echo -e "${azul}📌 Detectando y configurando IP estática...${reset}"
 IP_ACTUAL=$(hostname -I | awk '{print $1}')
 INTERFAZ=$(ip route | grep '^default' | awk '{print $5}')
 GATEWAY=$(ip route | grep '^default' | awk '{print $3}')
-CIDR=$(ip -o -f inet addr show $INTERFAZ | awk '{print $4}')
-MASCARA=$(ipcalc $CIDR | grep Netmask | awk '{print $2}')
+MASCARA_CIDR=$(ip -o -f inet addr show $INTERFAZ | awk '{print $4}' | cut -d/ -f2)
+MASCARA=$(ipcalc $IP_ACTUAL/$MASCARA_CIDR | grep NETMASK | cut -d= -f2)
 
 echo -e "${amarillo}IP:${reset} $IP_ACTUAL"
 echo -e "${amarillo}Interfaz:${reset} $INTERFAZ"
 echo -e "${amarillo}Gateway:${reset} $GATEWAY"
 echo -e "${amarillo}Máscara:${reset} $MASCARA"
 
-# Backup configuración original con fecha
-cp /etc/network/interfaces /etc/network/interfaces.bak.$(date +%F_%T)
+# Backup configuración original
+cp /etc/network/interfaces /etc/network/interfaces.bak
 
 # Configuración nueva
 cat > /etc/network/interfaces <<EOL
@@ -71,10 +71,7 @@ iface $INTERFAZ inet static
     dns-nameservers 8.8.8.8 1.1.1.1
 EOL
 
-# Aplicar cambios de IP sin reiniciar todo networking (para no cortar SSH)
-ip addr flush dev $INTERFAZ
-ifup $INTERFAZ
-
+systemctl restart networking
 echo -e "${verde}✅ IP estática configurada.${reset}"
 
 # ================================
