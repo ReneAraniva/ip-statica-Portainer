@@ -28,7 +28,7 @@ Este script automatiza la instalación y configuración de un servidor Debian co
    ```
 
 3. **Dar Permisos de Ejecución**  
-   Asegúrate de que el script tenga permisos de ejecución:
+   Asegúrate de que el script tenga permisos de ejecución(NOTA:Realiza esto dentro de la carpeta en el que este el .sh):
    ```bash
    chmod +x portainer-setup.sh
    ```
@@ -53,6 +53,7 @@ Este script automatiza la instalación y configuración de un servidor Debian co
 
 
 ¡Disfruta de tu nuevo servidor configurado! 🚀
+
 
 
 
