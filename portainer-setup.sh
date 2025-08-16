@@ -1,8 +1,9 @@
-#!/bin/bash 
+#!/usr/bin/env bash
 
 # ========================================
 #  Script de instalación y configuración
 #  Servidor Debian con Docker + Portainer + IP Estática automática
+#  Versión mejorada con validaciones
 #  By: Nazarhet
 # ========================================
 
@@ -13,8 +14,6 @@ amarillo="\e[33m"
 rojo="\e[31m"
 reset="\e[0m"
 
-echo -e "${verde}🚀 Iniciando configuración del servidor...${reset}"
-
 # ================================
 # Comprobar si es root
 # ================================
@@ -24,13 +23,26 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 # ================================
-# Actualizar el sistema
+# Verificar formato del script
 # ================================
+if file "$0" | grep -q "CRLF"; then
+    echo -e "${amarillo}⚠ El script está en formato Windows (CRLF). Corrigiendo...${reset}"
+    apt install -y dos2unix >/dev/null
+    dos2unix "$0"
+    echo -e "${verde}✔ Formato corregido. Vuelve a ejecutarlo.${reset}"
+    exit 0
+fi
+
+# ================================
+# Actualizar sistema
+# ================================
+echo -e "${azul}🔄 Actualizando el sistema...${reset}"
 apt update && apt upgrade -y
 
 # ================================
 # Instalar herramientas básicas
 # ================================
+echo -e "${azul}📦 Instalando herramientas...${reset}"
 apt install -y curl wget git unzip zip net-tools htop ufw openssh-server sudo ipcalc
 
 # ================================
@@ -42,24 +54,21 @@ systemctl start ssh
 # ================================
 # Autodetectar y configurar IP estática
 # ================================
-echo -e "${azul}📌 Detectando y configurando IP estática...${reset}"
-
 IP_ACTUAL=$(hostname -I | awk '{print $1}')
 INTERFAZ=$(ip route | grep '^default' | awk '{print $5}')
 GATEWAY=$(ip route | grep '^default' | awk '{print $3}')
 MASCARA_CIDR=$(ip -o -f inet addr show $INTERFAZ | awk '{print $4}' | cut -d/ -f2)
 MASCARA=$(ipcalc $IP_ACTUAL/$MASCARA_CIDR | grep NETMASK | cut -d= -f2)
 
-echo -e "${amarillo}IP:${reset} $IP_ACTUAL"
+echo -e "${amarillo}IP detectada:${reset} $IP_ACTUAL"
 echo -e "${amarillo}Interfaz:${reset} $INTERFAZ"
 echo -e "${amarillo}Gateway:${reset} $GATEWAY"
 echo -e "${amarillo}Máscara:${reset} $MASCARA"
 
-# Backup configuración original
-cp /etc/network/interfaces /etc/network/interfaces.bak
-
-# Configuración nueva
-cat > /etc/network/interfaces <<EOL
+read -p "¿Quieres configurar esta IP como estática? (s/n): " resp
+if [[ "$resp" =~ ^[Ss]$ ]]; then
+    cp /etc/network/interfaces /etc/network/interfaces.bak
+    cat > /etc/network/interfaces <<EOL
 auto lo
 iface lo inet loopback
 
@@ -70,22 +79,11 @@ iface $INTERFAZ inet static
     gateway $GATEWAY
     dns-nameservers 8.8.8.8 1.1.1.1
 EOL
-
-systemctl restart networking
-echo -e "${verde}✅ IP estática configurada.${reset}"
-
-# ================================
-# Mensaje de bienvenida
-# ================================
-clear
-cat << "EOF"
-___       __    ______                                 _____                                                  
-__ |     / /_______  /__________________ ________      __  /______     ______________________   ______________
-__ | /| / /_  _ \_  /_  ___/  __ \_  __ `__ \  _ \     _  __/  __ \    __  ___/  _ \_  ___/_ | / /  _ \_  ___/
-__ |/ |/ / /  __/  / / /__ / /_/ /  / / / / /  __/     / /_ / /_/ /    _(__  )/  __/  /   __ |/ //  __/  /    
-____/|__/  \___//_/  \___/ \____//_/ /_/ /_/\___/      \__/ \____/     /____/ \___//_/    _____/ \___//_/     
-EOF
-echo -e "${amarillo}Bienvenido. Servidor configurándose...${reset}"
+    systemctl restart networking
+    echo -e "${verde}✅ IP estática configurada.${reset}"
+else
+    echo -e "${amarillo}⚠ IP estática omitida.${reset}"
+fi
 
 # ================================
 # Instalar Docker
